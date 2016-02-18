@@ -45,9 +45,6 @@ COPY conf/vhost.conf /etc/nginx/sites-available/default
 # Supervisord configuration
 ADD conf/supervisord.conf /etc/supervisord.conf
 
-# Composer parallel install plugin
-composer global require hirak/prestissimo
-
 # Forward request and error logs to docker log collector
 RUN ln -sf /dev/stdout /var/log/nginx/access.log
 RUN ln -sf /dev/stderr /var/log/nginx/error.log
@@ -65,6 +62,7 @@ RUN sed -i "s/;date.timezone =.*/date.timezone = UTC/" /etc/php5/fpm/php.ini && 
     echo "daemon off;" >> /etc/nginx/nginx.conf
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer
+RUN composer global require hirak/prestissimo
 
 # Add php test file
 ADD ./info.php /src/public/index.php
