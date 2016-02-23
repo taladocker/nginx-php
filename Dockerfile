@@ -41,6 +41,10 @@ RUN apt-get update && apt-get install -y \
 
 # Nginx & PHP configuration
 COPY conf/vhost.conf /etc/nginx/sites-available/default
+COPY conf/nginx.conf /etc/nginx/nginx.conf
+COPY conf/php.ini /etc/php5/fpm/php.ini
+COPY conf/php-fpm.conf /etc/php5/fpm/php-fpm.conf
+COPY conf/www.conf /etc/php5/fpm/pool.d/www.conf
 
 # Supervisord configuration
 ADD conf/supervisord.conf /etc/supervisord.conf
@@ -49,28 +53,20 @@ ADD conf/supervisord.conf /etc/supervisord.conf
 RUN ln -sf /dev/stdout /var/log/nginx/access.log
 RUN ln -sf /dev/stderr /var/log/nginx/error.log
 
-RUN sed -i "s/;date.timezone =.*/date.timezone = UTC/" /etc/php5/fpm/php.ini && \
-    sed -i "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/" /etc/php5/fpm/php.ini && \
-    sed -i "s/display_errors = Off/display_errors = stderr/" /etc/php5/fpm/php.ini && \
-    sed -i "s/upload_max_filesize = 2M/upload_max_filesize = 30M/" /etc/php5/fpm/php.ini && \
-    sed -i "s/;opcache.enable=0/opcache.enable=0/" /etc/php5/fpm/php.ini && \
-    sed -i -e "s/;daemonize\s*=\s*yes/daemonize = no/g" /etc/php5/fpm/php-fpm.conf && \
-    sed -i '/^listen = /clisten = 9000' /etc/php5/fpm/pool.d/www.conf && \
-    sed -i '/^listen.allowed_clients/c;listen.allowed_clients =' /etc/php5/fpm/pool.d/www.conf && \
-    sed -i '/^;catch_workers_output/ccatch_workers_output = yes' /etc/php5/fpm/pool.d/www.conf && \
-    sed -i '/^;env\TEMP\ = .*/aenvDB_PORT_3306_TCP_ADDR = $DB_PORT_3306_TCP_ADDR' /etc/php5/fpm/pool.d/www.conf && \
-    echo "daemon off;" >> /etc/nginx/nginx.conf
-
+# Composer & support parallel install
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer
 RUN composer global require hirak/prestissimo
+
+# Npm extensions
+npm install -g aglio
 
 # Add php test file
 ADD ./info.php /src/public/index.php
 
-EXPOSE 80 443
-
 # Start Supervisord
 ADD ./start.sh /start.sh
 RUN chmod 755 /start.sh
+
+EXPOSE 80 443
 
 CMD ["/bin/bash", "/start.sh"]
