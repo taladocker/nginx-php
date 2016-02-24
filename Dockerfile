@@ -59,6 +59,7 @@ RUN composer global require hirak/prestissimo
 
 # Npm
 RUN ln -fs /usr/bin/nodejs /usr/local/bin/node
+RUN npm install -g bower grunt-cli gulp-cli
 
 # Add php test file
 ADD ./info.php /src/public/index.php
