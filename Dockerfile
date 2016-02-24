@@ -57,6 +57,9 @@ RUN ln -sf /dev/stderr /var/log/nginx/error.log
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer
 RUN composer global require hirak/prestissimo
 
+# Npm
+RUN ln -fs /usr/bin/nodejs /usr/local/bin/node
+
 # Add php test file
 ADD ./info.php /src/public/index.php
 
