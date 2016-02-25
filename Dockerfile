@@ -59,6 +59,8 @@ RUN composer global require hirak/prestissimo
 
 # Npm
 RUN ln -fs /usr/bin/nodejs /usr/local/bin/node
+RUN npm config set registry http://registry.npmjs.org/
+RUN npm config set strict-ssl false 
 RUN npm install -g bower grunt-cli gulp-cli
 
 # Add php test file
