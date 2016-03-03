@@ -7,7 +7,7 @@ ENV LANG       en_US.UTF-8
 ENV LC_ALL     en_US.UTF-8
 
 # Timezone
-echo "Asia/Bangkok" > /etc/timezone && dpkg-reconfigure -f noninteractive tzdata
+RUN echo "Asia/Bangkok" > /etc/timezone && dpkg-reconfigure -f noninteractive tzdata
 
 # Install Nginx & PHP
 RUN apt-get install -y software-properties-common
