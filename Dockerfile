@@ -46,6 +46,7 @@ RUN apt-get update && apt-get install -y \
 COPY conf/vhost.conf /etc/nginx/sites-available/default
 COPY conf/nginx.conf /etc/nginx/nginx.conf
 COPY conf/php.ini /etc/php5/fpm/php.ini
+COPY conf/cli.php.ini /etc/php5/cli/php.ini
 COPY conf/php-fpm.conf /etc/php5/fpm/php-fpm.conf
 COPY conf/www.conf /etc/php5/fpm/pool.d/www.conf
 
