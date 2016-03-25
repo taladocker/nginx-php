@@ -26,6 +26,7 @@ RUN apt-get update && apt-get install -y \
     php5-curl \
     php5-gd \
     php5-geoip \
+    php5-gearman \
     php5-imagick \
     php5-json \
     php5-ldap \
@@ -38,7 +39,6 @@ RUN apt-get update && apt-get install -y \
     php5-redis \
     php5-sqlite \
     php5-xmlrpc \
-    php5-xcache \
 && apt-get clean \
 && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
