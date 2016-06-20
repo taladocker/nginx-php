@@ -15,7 +15,7 @@ docker pull tala/nginx-php
 To simply run the container:
 
 ```
-docker run --name nginx -p 8080:80 -d tala/nginx-php
+docker run --name nginx-php -p 8080:80 -d tala/nginx-php
 ```
 
 You can then browse to http://DOCKER_HOST:8080 to view the default install files.
