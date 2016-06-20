@@ -46,13 +46,14 @@ RUN echo "Asia/Bangkok" > /etc/timezone \
 # Disable xdebug by default
 
 # Install nodejs, npm, phalcon & composer
-RUN curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash - \
+RUN curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash - \
 && apt-get install -y nodejs \
 && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer \
 && ln -fs /usr/bin/nodejs /usr/local/bin/node \
 && npm config set registry http://registry.npmjs.org \
 && npm config set strict-ssl false \
-&& npm install -g npm aglio bower grunt-cli gulp-cli
+&& npm cache clean \
+&& npm install -g aglio bower grunt-cli gulp-cli
 
 # Nginx & PHP & Supervisor configuration
 COPY conf/nginx/vhost.conf /etc/nginx/sites-available/default
