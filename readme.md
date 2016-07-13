@@ -18,4 +18,4 @@ To simply run the container:
 docker run --name nginx-php -p 8080:80 -d tala/nginx-php
 ```
 
-You can then browse to http://DOCKER_HOST:8080 to view the default install files.
+You can then browse to http://localhost:8080 to verify.
