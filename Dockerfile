@@ -10,7 +10,8 @@ ENV LC_ALL     en_US.UTF-8
 RUN echo "Asia/Bangkok" > /etc/timezone \
 && dpkg-reconfigure -f noninteractive tzdata \
 && apt-get install -y software-properties-common \
-&& add-apt-repository -y ppa:nginx/stable && add-apt-repository -y ppa:ondrej/php5-5.6 \
+&& apt-get install -y language-pack-en-base \
+&& add-apt-repository -y ppa:nginx/stable && add-apt-repository ppa:ondrej/php \
 && apt-get update && apt-get install -y \
     build-essential \
     vim \
@@ -21,28 +22,29 @@ RUN echo "Asia/Bangkok" > /etc/timezone \
     git \
     supervisor \
     nginx \
-    php5-dev \
-    php5-fpm \
-    php5-curl \
-    php5-gd \
-    php5-geoip \
-    php5-imagick \
-    php5-json \
-    php5-ldap \
-    php5-mcrypt \
-    php5-memcache \
-    php5-memcached \
-    php5-mongo \
-    php5-mysqlnd \
-    php5-pgsql \
-    php5-redis \
-    php5-sqlite \
-    php5-xmlrpc \
-    php5-xcache \
-    php5-xdebug \
-    php5-intl \
+    php7.0-dev \
+    php7.0-fpm \
+    php7.0-curl \
+    php7.0-gd \
+    php7.0-geoip \
+    php7.0-imagick \
+    php7.0-json \
+    php7.0-ldap \
+    php7.0-mcrypt \
+    php7.0-memcache \
+    php7.0-memcached \
+    php7.0-mongo \
+    php7.0-mysqlnd \
+    php7.0-pgsql \
+    php7.0-redis \
+    php7.0-sqlite \
+    php7.0-xmlrpc \
+    php7.0-xdebug \
+    php7.0-intl \
 && apt-get clean \
-&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /etc/php5/cli/conf.d/20-xdebug.ini /etc/php5/fpm/conf.d/20-xdebug.ini
+&& mkdir /run/php && chown www-data:www-data /run/php \
+&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
+&& rm -rf /etc/php7/cli/conf.d/20-xdebug.ini /etc/php7/fpm/conf.d/20-xdebug.ini
 # Disable xdebug by default
 
 # Install nodejs, npm, phalcon & composer
@@ -58,10 +60,10 @@ RUN curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash - \
 # Nginx & PHP & Supervisor configuration
 COPY conf/nginx/vhost.conf /etc/nginx/sites-available/default
 COPY conf/nginx/nginx.conf /etc/nginx/nginx.conf
-COPY conf/php56/php.ini /etc/php5/fpm/php.ini
-COPY conf/php56/cli.php.ini /etc/php5/cli/php.ini
-COPY conf/php56/php-fpm.conf /etc/php5/fpm/php-fpm.conf
-COPY conf/php56/www.conf /etc/php5/fpm/pool.d/www.conf
+COPY conf/php70/php.ini /etc/php/7.0/fpm/php.ini
+COPY conf/php70/cli.php.ini /etc/php/7.0/cli/php.ini
+COPY conf/php70/php-fpm.conf /etc/php/7.0/fpm/php-fpm.conf
+COPY conf/php70/www.conf /etc/php/7.0/fpm/pool.d/www.conf
 COPY conf/supervisor/supervisord.conf /etc/supervisord.conf
 
 # Forward request and error logs to docker log collector
@@ -77,4 +79,4 @@ RUN chmod 755 /start.sh
 
 EXPOSE 80 443
 
-CMD ["/bin/bash", "/start.sh"]
+CMD ["/bin/bash", "sudo /start.sh"]
