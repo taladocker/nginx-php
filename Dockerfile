@@ -79,4 +79,4 @@ RUN chmod 755 /start.sh
 
 EXPOSE 80 443
 
-CMD ["/bin/bash", "sudo /start.sh"]
+CMD ["/bin/bash", "/start.sh"]
