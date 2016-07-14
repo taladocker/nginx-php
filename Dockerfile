@@ -24,12 +24,15 @@ RUN echo "Asia/Bangkok" > /etc/timezone \
     nginx \
     php7.0-dev \
     php7.0-fpm \
+    php7.0-bcmath \
     php7.0-curl \
     php7.0-gd \
     php7.0-geoip \
     php7.0-imagick \
+    php7.0-intl \
     php7.0-json \
     php7.0-ldap \
+    php7.0-mbstring \
     php7.0-mcrypt \
     php7.0-memcache \
     php7.0-memcached \
@@ -40,7 +43,6 @@ RUN echo "Asia/Bangkok" > /etc/timezone \
     php7.0-sqlite \
     php7.0-xmlrpc \
     php7.0-xdebug \
-    php7.0-intl \
 && apt-get clean \
 && mkdir /run/php && chown www-data:www-data /run/php \
 && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
