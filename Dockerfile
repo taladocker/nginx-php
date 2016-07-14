@@ -46,7 +46,7 @@ RUN echo "Asia/Bangkok" > /etc/timezone \
 && apt-get clean \
 && mkdir /run/php && chown www-data:www-data /run/php \
 && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
-&& rm -rf /etc/php7/cli/conf.d/20-xdebug.ini /etc/php7/fpm/conf.d/20-xdebug.ini
+&& rm -rf /etc/php/7.0/fpm/conf.d/20-xdebug.ini /etc/php/7.0/cli/conf.d/20-xdebug.ini
 # Disable xdebug by default
 
 # Install nodejs, npm, phalcon & composer
