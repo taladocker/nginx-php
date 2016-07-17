@@ -15,6 +15,7 @@ RUN echo "Asia/Bangkok" > /etc/timezone \
 && apt-get update && apt-get install -y \
     build-essential \
     vim \
+    unzip \
     curl \
     wget \
     dialog \
