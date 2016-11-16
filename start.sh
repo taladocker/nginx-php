@@ -12,9 +12,8 @@ _init_xdebug() {
 }
 
 exec_supervisord() {
-    exec /usr/bin/supervisord --configuration /etc/supervisord.conf
     echo 'Start supervisord'
-    exec /usr/bin/supervisord -n -c /etc/supervisord.conf
+    /usr/bin/supervisord -n -c /etc/supervisord.conf
 }
 
 # Run helper function if passed as parameters
