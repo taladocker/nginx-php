@@ -12,7 +12,7 @@ RUN echo "Asia/Bangkok" > /etc/timezone \
 && apt-get install -y software-properties-common \
 && apt-get install -y language-pack-en-base \
 && add-apt-repository -y ppa:nginx/stable && add-apt-repository ppa:ondrej/php \
-&& apt-get update && apt-get install -y \
+&& apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     build-essential \
     vim \
     unzip \
@@ -44,11 +44,15 @@ RUN echo "Asia/Bangkok" > /etc/timezone \
     php7.0-sqlite \
     php7.0-xmlrpc \
     php7.0-xdebug \
-&& apt-get clean \
+&& echo 'deb http://apt.newrelic.com/debian/ newrelic non-free' > /etc/apt/sources.list.d/newrelic.list \
+&& curl -sSL https://download.newrelic.com/548C16BF.gpg | apt-key add - \
+&& apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y newrelic-php5 \
 && mkdir /run/php && chown www-data:www-data /run/php \
-&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
-&& rm -rf /etc/php/7.0/fpm/conf.d/20-xdebug.ini /etc/php/7.0/cli/conf.d/20-xdebug.ini
-# Disable xdebug by default
+&& rm -vf /etc/php/7.0/fpm/conf.d/20-xdebug.ini /etc/php/7.0/cli/conf.d/20-xdebug.ini \
+&& rm -vf /etc/php/7.0/fpm/conf.d/20-newrelic.ini /etc/php/7.0/cli/conf.d/20-newrelic.ini \
+&& rm -vf /var/lib/apt/lists/*.* /tmp/* /var/tmp/* \
+&& apt-get autoclean
+# Disable xdebug, newrelic by default
 
 # Install nodejs, npm, phalcon & composer
 RUN curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash - \

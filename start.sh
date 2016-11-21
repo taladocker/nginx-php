@@ -26,6 +26,27 @@ _init_worker() {
   fi
 }
 
+# start newrelic if ENV variable TK_NEWRELIC_ENABLED == 1
+# newrelic config:
+#   TK_NEWRELIC_LICENCE=foobar
+#   TK_NEWRELIC_APPNAME=foobar
+_init_newrelic() {
+  local _newrelic_enableb=${TK_NEWRELIC_ENABLED:-0}
+  echo ":: initializing newrelic config (_newrelic_enableb=${_newrelic_enableb})"
+
+  if [[ $_newrelic_enableb == 1 ]] ; then
+    local _f_conf="/etc/php/7.0/mods-available/newrelic.ini"
+    local _license=${TK_NEWRELIC_LICENCE:-}
+    local _app_name=${TK_NEWRELIC_APPNAME:-tk-nginx-php}
+
+    sed -i "s#newrelic.license = .*#newrelic.license = \"${_license}\"#g" $_f_conf
+    sed -i "s#newrelic.appname = .*#newrelic.appname = \"${_app_name}\"#g" $_f_conf
+
+    ln -svf "$_f_conf" /etc/php/7.0/cli/conf.d/20-newrelic.ini
+    ln -svf "$_f_conf" /etc/php/7.0/fpm/conf.d/20-newrelic.ini
+  fi
+}
+
 exec_supervisord() {
     echo 'Start supervisord'
     /usr/bin/supervisord -n -c /etc/supervisord.conf
@@ -38,5 +59,6 @@ if [[ -n "$@" ]]; then
 else
   _init_xdebug  # for corveralls.io ...
   _init_worker
+  _init_newrelic
   exec_supervisord
 fi
