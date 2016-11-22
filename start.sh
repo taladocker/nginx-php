@@ -28,7 +28,7 @@ _init_worker() {
 
 # start newrelic if ENV variable TK_NEWRELIC_ENABLED == 1
 # newrelic config:
-#   TK_NEWRELIC_LICENCE=foobar
+#   TK_NEWRELIC_LICENSE=foobar
 #   TK_NEWRELIC_APPNAME=foobar
 _init_newrelic() {
   local _newrelic_enableb=${TK_NEWRELIC_ENABLED:-0}
@@ -36,7 +36,7 @@ _init_newrelic() {
 
   if [[ $_newrelic_enableb == 1 ]] ; then
     local _f_conf="/etc/php/7.0/mods-available/newrelic.ini"
-    local _license=${TK_NEWRELIC_LICENCE:-}
+    local _license=${TK_NEWRELIC_LICENSE:-}
     local _app_name=${TK_NEWRELIC_APPNAME:-tk-nginx-php}
 
     sed -i "s#newrelic.license = .*#newrelic.license = \"${_license}\"#g" $_f_conf
