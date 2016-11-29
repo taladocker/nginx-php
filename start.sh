@@ -1,8 +1,12 @@
 #!/bin/bash
 
 # enable xdebug if ENV variable TIKI_XDEBUG_ENABLED == 1
+# enable xdebug if ENV variable TK_XDEBUG_ENABLED == 1
 _init_xdebug() {
-  local _xdebug_enableb=${TIKI_XDEBUG_ENABLED:-0}
+  local _xdebug_enableb=0
+  [[ -n "${TIKI_XDEBUG_ENABLED:-}" ]] && _xdebug_enableb=$TIKI_XDEBUG_ENABLED
+  [[ -n "${TK_XDEBUG_ENABLED:-}" ]]   && _xdebug_enableb=$TK_XDEBUG_ENABLED
+
   echo ":: initializing xdebug config (_xdebug_enableb=${_xdebug_enableb})"
 
   if [[ $_xdebug_enableb == 1 ]] ; then
