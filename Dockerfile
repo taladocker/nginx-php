@@ -22,6 +22,7 @@ RUN echo "Asia/Bangkok" > /etc/timezone \
     net-tools \
     git \
     supervisor \
+    python-pip \
     nginx \
     php7.0-dev \
     php7.0-fpm \
@@ -47,6 +48,7 @@ RUN echo "Asia/Bangkok" > /etc/timezone \
 && echo 'deb http://apt.newrelic.com/debian/ newrelic non-free' > /etc/apt/sources.list.d/newrelic.list \
 && curl -sSL https://download.newrelic.com/548C16BF.gpg | apt-key add - \
 && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y newrelic-php5 \
+&& pip install superlance slacker \
 && mkdir /run/php && chown www-data:www-data /run/php \
 && rm -vf /etc/php/7.0/fpm/conf.d/20-xdebug.ini /etc/php/7.0/cli/conf.d/20-xdebug.ini \
 && rm -vf /etc/php/7.0/fpm/conf.d/20-newrelic.ini /etc/php/7.0/cli/conf.d/20-newrelic.ini \
@@ -63,6 +65,10 @@ RUN curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash - \
 && npm config set strict-ssl false \
 && npm cache clean \
 && npm install -g aglio bower grunt-cli gulp-cli
+
+# Install superslacker (supervisord notify to slack)
+RUN curl -sSL https://raw.githubusercontent.com/luk4hn/superslacker/state_change_msg/superslacker/superslacker.py > /usr/local/bin/superslacker \
+    && chmod 755 /usr/local/bin/superslacker
 
 # Nginx & PHP & Supervisor configuration
 COPY conf/nginx/vhost.conf /etc/nginx/sites-available/default

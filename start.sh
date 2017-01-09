@@ -30,6 +30,29 @@ _init_worker() {
   fi
 }
 
+
+# init supervisord eventlistener to notify to slack when a process change it's state
+_init_superslacker() {
+  local _is_superslacker=${TK_IS_SUPERSLACKER:-1}
+  TK_SUPERVISORD_ALERT_WEBHOOK="${TK_SUPERVISORD_ALERT_WEBHOOK:-https://hooks.slack.com/services/}"
+  TK_SUPERVISORD_ALERT_CHANNEL="${TK_SUPERVISORD_ALERT_CHANNEL:-system-tmp}"
+  TK_SUPERVISORD_ALERT_FROM="${TK_SUPERVISORD_ALERT_FROM:-$(hostname)}"
+
+  echo ":: initializing superslacker config (_is_superslacker=${_is_superslacker})"
+
+  if [[ $_is_superslacker == 1 ]] ; then
+    grep -q superslacker /etc/supervisord.conf \
+    || cat >> /etc/supervisord.conf \
+<<-EOF
+[eventlistener:superslacker]
+command=superslacker --webhook=${TK_SUPERVISORD_ALERT_WEBHOOK} --channel=${TK_SUPERVISORD_ALERT_CHANNEL} --hostname=${TK_SUPERVISORD_ALERT_FROM}
+events=PROCESS_STATE,TICK_60
+EOF
+
+  fi
+}
+
+
 # start newrelic if ENV variable TK_NEWRELIC_ENABLED == 1
 # newrelic config:
 #   TK_NEWRELIC_LICENSE=foobar
@@ -63,6 +86,7 @@ if [[ -n "$@" ]]; then
 else
   _init_xdebug  # for corveralls.io ...
   _init_worker
+  _init_superslacker
   _init_newrelic
   exec_supervisord
 fi
