@@ -24,6 +24,7 @@ RUN echo "Asia/Bangkok" > /etc/timezone \
     supervisor \
     python-pip \
     nginx \
+    php7.0-common \
     php7.0-dev \
     php7.0-fpm \
     php7.0-bcmath \
@@ -43,6 +44,7 @@ RUN echo "Asia/Bangkok" > /etc/timezone \
     php7.0-pgsql \
     php7.0-redis \
     php7.0-sqlite \
+    php7.0-xml \
     php7.0-xmlrpc \
     php7.0-xdebug \
 && echo 'deb http://apt.newrelic.com/debian/ newrelic non-free' > /etc/apt/sources.list.d/newrelic.list \
