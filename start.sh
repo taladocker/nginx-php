@@ -33,7 +33,7 @@ _init_worker() {
 
 # init supervisord eventlistener to notify to slack when a process change it's state
 _init_superslacker() {
-  local _is_superslacker=${TK_IS_SUPERSLACKER:-1}
+  local _is_superslacker=${TK_IS_SUPERSLACKER:-0}
   TK_SUPERVISORD_ALERT_WEBHOOK="${TK_SUPERVISORD_ALERT_WEBHOOK:-https://hooks.slack.com/services/}"
   TK_SUPERVISORD_ALERT_CHANNEL="${TK_SUPERVISORD_ALERT_CHANNEL:-system-tmp}"
   TK_SUPERVISORD_ALERT_FROM="${TK_SUPERVISORD_ALERT_FROM:-$(hostname)}"
