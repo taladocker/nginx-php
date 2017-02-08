@@ -59,17 +59,17 @@ RUN echo "Asia/Bangkok" > /etc/timezone \
 # Disable xdebug, newrelic by default
 
 # Install php-rdkafka
-RUN curl -sSL https://github.com/edenhill/librdkafka/archive/v0.9.2.tar.gz | tar xz \
-    && cd librdkafka-0.9.2 \
+RUN curl -sSL https://github.com/edenhill/librdkafka/archive/v0.9.3.tar.gz | tar xz \
+    && cd librdkafka-0.9.3 \
     && ./configure && make && make install \
-    && cd .. && rm -rf librdkafka-0.9.2
+    && cd .. && rm -rf librdkafka-0.9.3
 
-RUN curl -sSL https://github.com/arnaud-lb/php-rdkafka/archive/3.0.0.tar.gz | tar xz \
-    && cd php-rdkafka-3.0.0 \
-    && phpize && ./configure && make all -j 5 && make install \
+RUN curl -sSL https://github.com/arnaud-lb/php-rdkafka/archive/3.0.1.tar.gz | tar xz \
+    && cd php-rdkafka-3.0.1 \
+    && phpize && ./configure && make all && make install \
     && echo "extension=rdkafka.so" > /etc/php/7.0/mods-available/rdkafka.ini \
     && phpenmod rdkafka \
-    && cd .. && rm -rf php-rdkafka-3.0.0
+    && cd .. && rm -rf php-rdkafka-3.0.1
 
 # Install nodejs, npm, phalcon & composer
 RUN curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash - \
