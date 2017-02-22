@@ -46,6 +46,7 @@ RUN echo "Asia/Bangkok" > /etc/timezone \
     php7.0-sqlite \
     php7.0-xml \
     php7.0-xmlrpc \
+    php7.0-zip \
     php7.0-xdebug \
 && echo 'deb http://apt.newrelic.com/debian/ newrelic non-free' > /etc/apt/sources.list.d/newrelic.list \
 && curl -sSL https://download.newrelic.com/548C16BF.gpg | apt-key add - \
