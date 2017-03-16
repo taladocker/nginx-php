@@ -1,15 +1,14 @@
 #!/bin/bash
 
-# enable xdebug if ENV variable TIKI_XDEBUG_ENABLED == 1
 # enable xdebug if ENV variable TK_XDEBUG_ENABLED == 1
 _init_xdebug() {
   local _xdebug_enableb=0
-  [[ -n "${TIKI_XDEBUG_ENABLED:-}" ]] && _xdebug_enableb=$TIKI_XDEBUG_ENABLED
   [[ -n "${TK_XDEBUG_ENABLED:-}" ]]   && _xdebug_enableb=$TK_XDEBUG_ENABLED
 
   echo ":: initializing xdebug config (_xdebug_enableb=${_xdebug_enableb})"
 
   if [[ $_xdebug_enableb == 1 ]] ; then
+    echo -e "zend_extension=xdebug.so\nxdebug.remote_enable = on" > /etc/php/7.0/mods-available/xdebug.ini
     ln -svf /etc/php/7.0/mods-available/xdebug.ini /etc/php/7.0/cli/conf.d/20-xdebug.ini
     ln -svf /etc/php/7.0/mods-available/xdebug.ini /etc/php/7.0/fpm/conf.d/20-xdebug.ini
   fi
