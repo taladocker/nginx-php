@@ -1,19 +1,29 @@
-FROM ubuntu:14.04.3
+FROM ubuntu:16.04
 MAINTAINER Hoa Nguyen <hoa.nguyenmanh@tiki.vn>
 
-# Ensure UTF-8
-RUN locale-gen en_US.UTF-8
+# ENV
+ENV DEBIAN_FRONTEND noninteractive
 ENV LANG       en_US.UTF-8
 ENV LC_ALL     en_US.UTF-8
+ENV TZ         Asia/Saigon
 
-# Setup timezone & install libraries
-RUN echo "Asia/Bangkok" > /etc/timezone \
-&& dpkg-reconfigure -f noninteractive tzdata \
-&& apt-get install -y software-properties-common \
-&& apt-get install -y language-pack-en-base \
-&& add-apt-repository -y ppa:nginx/stable && add-apt-repository ppa:ondrej/php \
-&& apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
-    build-essential \
+# timezone and locale
+RUN apt-get update \
+    && apt-get install -y software-properties-common \
+        language-pack-en-base \
+        apt-utils tzdata locales \
+    && locale-gen en_US.UTF-8 \
+    && echo $TZ > /etc/timezone \
+    && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
+    && dpkg-reconfigure -f noninteractive tzdata \
+    && apt-get autoclean \
+    && rm -vf /var/lib/apt/lists/*.* /tmp/* /var/tmp/*
+
+# php
+RUN add-apt-repository -y ppa:nginx/stable \
+    && add-apt-repository ppa:ondrej/php \
+    && apt-get update \
+    && apt-get install -y build-essential \
     vim \
     unzip \
     curl \
@@ -55,8 +65,9 @@ RUN echo "Asia/Bangkok" > /etc/timezone \
 && mkdir /run/php && chown www-data:www-data /run/php \
 && rm -vf /etc/php/7.0/fpm/conf.d/20-xdebug.ini /etc/php/7.0/cli/conf.d/20-xdebug.ini \
 && rm -vf /etc/php/7.0/fpm/conf.d/20-newrelic.ini /etc/php/7.0/cli/conf.d/20-newrelic.ini \
-&& rm -vf /var/lib/apt/lists/*.* /tmp/* /var/tmp/* \
-&& apt-get autoclean
+&& apt-get autoclean \
+&& rm -vf /var/lib/apt/lists/*.* /tmp/* /var/tmp/*
+
 # Disable xdebug, newrelic by default
 
 # Install php-rdkafka
@@ -73,14 +84,16 @@ RUN curl -sSL https://github.com/arnaud-lb/php-rdkafka/archive/3.0.1.tar.gz | ta
     && cd .. && rm -rf php-rdkafka-3.0.1
 
 # Install nodejs, npm, phalcon & composer
-RUN curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash - \
+RUN curl -sL https://deb.nodesource.com/setup_6.x | bash - \
 && apt-get install -y nodejs \
 && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer \
 && ln -fs /usr/bin/nodejs /usr/local/bin/node \
 && npm config set registry http://registry.npmjs.org \
 && npm config set strict-ssl false \
 && npm cache clean \
-&& npm install -g aglio bower grunt-cli gulp-cli
+&& npm install -g aglio bower grunt-cli gulp-cli \
+&& apt-get autoclean \
+&& rm -vf /var/lib/apt/lists/*.*
 
 # Install superslacker (supervisord notify to slack)
 RUN curl -sSL https://raw.githubusercontent.com/luk4hn/superslacker/state_change_msg/superslacker/superslacker.py > /usr/local/bin/superslacker \
