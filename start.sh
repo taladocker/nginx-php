@@ -75,7 +75,7 @@ _init_newrelic() {
 
 exec_supervisord() {
     echo 'Start supervisord'
-    /usr/bin/supervisord -n -c /etc/supervisord.conf
+    exec /usr/bin/supervisord -n -c /etc/supervisord.conf
 }
 
 # Run helper function if passed as parameters
