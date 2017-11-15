@@ -34,37 +34,37 @@ RUN add-apt-repository -y ppa:nginx/stable \
     supervisor \
     python-pip \
     nginx \
-    php7.0-common \
-    php7.0-dev \
-    php7.0-fpm \
-    php7.0-bcmath \
-    php7.0-curl \
-    php7.0-gd \
-    php7.0-geoip \
-    php7.0-imagick \
-    php7.0-intl \
-    php7.0-json \
-    php7.0-ldap \
-    php7.0-mbstring \
-    php7.0-mcrypt \
-    php7.0-memcache \
-    php7.0-memcached \
-    php7.0-mongo \
-    php7.0-mysqlnd \
-    php7.0-pgsql \
-    php7.0-redis \
-    php7.0-sqlite \
-    php7.0-xml \
-    php7.0-xmlrpc \
-    php7.0-zip \
-    php7.0-xdebug \
+    php7.1-common \
+    php7.1-dev \
+    php7.1-fpm \
+    php7.1-bcmath \
+    php7.1-curl \
+    php7.1-gd \
+    php7.1-geoip \
+    php7.1-imagick \
+    php7.1-intl \
+    php7.1-json \
+    php7.1-ldap \
+    php7.1-mbstring \
+    php7.1-mcrypt \
+    php7.1-memcache \
+    php7.1-memcached \
+    php7.1-mongo \
+    php7.1-mysqlnd \
+    php7.1-pgsql \
+    php7.1-redis \
+    php7.1-sqlite \
+    php7.1-xml \
+    php7.1-xmlrpc \
+    php7.1-zip \
+    php7.1-xdebug \
 && echo 'deb http://apt.newrelic.com/debian/ newrelic non-free' > /etc/apt/sources.list.d/newrelic.list \
 && curl -sSL https://download.newrelic.com/548C16BF.gpg | apt-key add - \
 && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y newrelic-php5 \
 && pip install superlance slacker \
 && mkdir /run/php && chown www-data:www-data /run/php \
-&& rm -vf /etc/php/7.0/fpm/conf.d/20-xdebug.ini /etc/php/7.0/cli/conf.d/20-xdebug.ini \
-&& rm -vf /etc/php/7.0/fpm/conf.d/20-newrelic.ini /etc/php/7.0/cli/conf.d/20-newrelic.ini \
+&& rm -vf /etc/php/7.1/fpm/conf.d/20-xdebug.ini /etc/php/7.1/cli/conf.d/20-xdebug.ini \
+&& rm -vf /etc/php/7.1/fpm/conf.d/20-newrelic.ini /etc/php/7.1/cli/conf.d/20-newrelic.ini \
 && apt-get autoclean \
 && rm -vf /var/lib/apt/lists/*.* /tmp/* /var/tmp/*
 
@@ -79,7 +79,7 @@ RUN curl -sSL https://github.com/edenhill/librdkafka/archive/v0.9.3.tar.gz | tar
 RUN curl -sSL https://github.com/arnaud-lb/php-rdkafka/archive/3.0.1.tar.gz | tar xz \
     && cd php-rdkafka-3.0.1 \
     && phpize && ./configure && make all && make install \
-    && echo "extension=rdkafka.so" > /etc/php/7.0/mods-available/rdkafka.ini \
+    && echo "extension=rdkafka.so" > /etc/php/7.1/mods-available/rdkafka.ini \
     && phpenmod rdkafka \
     && cd .. && rm -rf php-rdkafka-3.0.1
 
@@ -102,10 +102,10 @@ RUN curl -sSL https://raw.githubusercontent.com/luk4hn/superslacker/state_change
 # Nginx & PHP & Supervisor configuration
 COPY conf/nginx/vhost.conf /etc/nginx/sites-available/default
 COPY conf/nginx/nginx.conf /etc/nginx/nginx.conf
-COPY conf/php70/php.ini /etc/php/7.0/fpm/php.ini
-COPY conf/php70/cli.php.ini /etc/php/7.0/cli/php.ini
-COPY conf/php70/php-fpm.conf /etc/php/7.0/fpm/php-fpm.conf
-COPY conf/php70/www.conf /etc/php/7.0/fpm/pool.d/www.conf
+COPY conf/php71/php.ini /etc/php/7.1/fpm/php.ini
+COPY conf/php71/cli.php.ini /etc/php/7.1/cli/php.ini
+COPY conf/php71/php-fpm.conf /etc/php/7.1/fpm/php-fpm.conf
+COPY conf/php71/www.conf /etc/php/7.1/fpm/pool.d/www.conf
 COPY conf/supervisor/supervisord.conf /etc/supervisord.conf
 
 # Forward request and error logs to docker log collector
