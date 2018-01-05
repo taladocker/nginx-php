@@ -10,7 +10,7 @@ ENV TZ         Asia/Saigon
 # timezone and locale
 RUN apt-get update \
     && apt-get install -y software-properties-common \
-        language-pack-en-base \
+        language-pack-en-base sudo \
         apt-utils tzdata locales \
     && locale-gen en_US.UTF-8 \
     && echo $TZ > /etc/timezone \
@@ -61,6 +61,7 @@ RUN add-apt-repository -y ppa:nginx/stable \
 && echo 'deb http://apt.newrelic.com/debian/ newrelic non-free' > /etc/apt/sources.list.d/newrelic.list \
 && curl -sSL https://download.newrelic.com/548C16BF.gpg | apt-key add - \
 && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y newrelic-php5 \
+&& (curl -L https://toolbelt.treasuredata.com/sh/install-ubuntu-xenial-td-agent3.sh | sh) \
 && pip install superlance slacker \
 && mkdir /run/php && chown www-data:www-data /run/php \
 && rm -vf /etc/php/7.0/fpm/conf.d/20-xdebug.ini /etc/php/7.0/cli/conf.d/20-xdebug.ini \
@@ -107,6 +108,7 @@ COPY conf/php70/cli.php.ini /etc/php/7.0/cli/php.ini
 COPY conf/php70/php-fpm.conf /etc/php/7.0/fpm/php-fpm.conf
 COPY conf/php70/www.conf /etc/php/7.0/fpm/pool.d/www.conf
 COPY conf/supervisor/supervisord.conf /etc/supervisord.conf
+COPY conf/td-agent/td-agent.conf /etc/td-agent/td-agent.conf
 
 # Forward request and error logs to docker log collector
 RUN ln -sf /dev/stdout /var/log/nginx/access.log

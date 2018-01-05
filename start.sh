@@ -73,9 +73,23 @@ _init_newrelic() {
   fi
 }
 
+
+# config td-agent to send log to remote server
+# td-agent config:
+#   TK_TDAGENT_CENTRAL=fluentd.example.com
+#
+_init_tdagent(){
+  local _tdagent_central=${TK_TDAGENT_CENTRAL:-uat.fluentd.tiki.services}
+  local _f_conf="/etc/td-agent/td-agent.conf"
+  echo ":: initializing td-agent config (central server: ${_tdagent_central})"
+
+  sed -i "s#host 1.2.3.4#host ${_tdagent_central}#g" $_f_conf
+}
+
+
 exec_supervisord() {
     echo 'Start supervisord'
-    /usr/bin/supervisord -n -c /etc/supervisord.conf
+    exec /usr/bin/supervisord -n -c /etc/supervisord.conf
 }
 
 # Run helper function if passed as parameters
@@ -87,5 +101,6 @@ else
   _init_worker
   _init_superslacker
   _init_newrelic
+  _init_tdagent
   exec_supervisord
 fi
