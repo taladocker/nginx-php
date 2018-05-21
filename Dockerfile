@@ -84,16 +84,21 @@ RUN curl -sSL https://github.com/arnaud-lb/php-rdkafka/archive/3.0.1.tar.gz | ta
     && cd .. && rm -rf php-rdkafka-3.0.1
 
 # Install nodejs, npm, phalcon & composer
-RUN curl -sL https://deb.nodesource.com/setup_6.x | bash - \
+RUN curl -sL  https://deb.nodesource.com/setup_10.x | bash -\
 && apt-get install -y nodejs \
 && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer \
-&& ln -fs /usr/bin/nodejs /usr/local/bin/node \
-&& npm config set registry http://registry.npmjs.org \
-&& npm config set strict-ssl false \
-&& npm cache clean \
-&& npm install -g aglio bower grunt-cli gulp-cli \
+#&& ln -fs /usr/bin/nodejs /usr/local/bin/node \
+#&& npm config set registry http://registry.npmjs.org \
+#&& npm config set strict-ssl false \
+#&& npm cache clean \
+#&& npm install -g aglio bower grunt-cli gulp-cli \
 && apt-get autoclean \
 && rm -vf /var/lib/apt/lists/*.*
+
+# Install Yarn
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg |  apt-key add - \
+&& echo "deb https://dl.yarnpkg.com/debian/ stable main" |  tee /etc/apt/sources.list.d/yarn.list \
+&&  apt-get update &&  apt-get install yarn -y
 
 # Install superslacker (supervisord notify to slack)
 RUN curl -sSL https://raw.githubusercontent.com/luk4hn/superslacker/state_change_msg/superslacker/superslacker.py > /usr/local/bin/superslacker \
