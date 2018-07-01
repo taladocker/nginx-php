@@ -2,16 +2,13 @@ FROM ubuntu:16.04
 MAINTAINER Hoa Nguyen <hoa.nguyenmanh@tiki.vn>
 
 # ENV
-ENV DEBIAN_FRONTEND noninteractive
-ENV LANG       en_US.UTF-8
-ENV LC_ALL     en_US.UTF-8
-ENV TZ         Asia/Saigon
+ENV DEBIAN_FRONTEND=noninteractive LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 TZ=Asia/Saigon
 
-# timezone and locale
+# BASE
 RUN apt-get update \
     && apt-get install -y software-properties-common \
-        language-pack-en-base sudo \
-        apt-utils tzdata locales \
+        language-pack-en-base curl wget jq vim-nox moreutils \
+        apt-utils tzdata locales sudo build-essential \
     && locale-gen en_US.UTF-8 \
     && echo $TZ > /etc/timezone \
     && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
@@ -19,57 +16,52 @@ RUN apt-get update \
     && apt-get autoclean \
     && rm -vf /var/lib/apt/lists/*.* /tmp/* /var/tmp/*
 
-# php
+# PHP
+# Disable xdebug, newrelic by default
 RUN add-apt-repository -y ppa:nginx/stable \
     && add-apt-repository ppa:ondrej/php \
+    && echo 'deb http://apt.newrelic.com/debian/ newrelic non-free' > /etc/apt/sources.list.d/newrelic.list \
+    && curl -sSL https://download.newrelic.com/548C16BF.gpg | apt-key add - \
     && apt-get update \
-    && apt-get install -y build-essential \
-    vim \
-    unzip \
-    curl \
-    wget \
-    dialog \
-    net-tools \
-    git \
-    supervisor \
-    python-pip \
-    nginx \
-    php7.0-common \
-    php7.0-dev \
-    php7.0-fpm \
-    php7.0-bcmath \
-    php7.0-curl \
-    php7.0-gd \
-    php7.0-geoip \
-    php7.0-imagick \
-    php7.0-intl \
-    php7.0-json \
-    php7.0-ldap \
-    php7.0-mbstring \
-    php7.0-mcrypt \
-    php7.0-memcache \
-    php7.0-memcached \
-    php7.0-mongo \
-    php7.0-mysqlnd \
-    php7.0-pgsql \
-    php7.0-redis \
-    php7.0-sqlite \
-    php7.0-xml \
-    php7.0-xmlrpc \
-    php7.0-zip \
-    php7.0-xdebug \
-&& echo 'deb http://apt.newrelic.com/debian/ newrelic non-free' > /etc/apt/sources.list.d/newrelic.list \
-&& curl -sSL https://download.newrelic.com/548C16BF.gpg | apt-key add - \
-&& apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y newrelic-php5 \
-&& (curl -L https://toolbelt.treasuredata.com/sh/install-ubuntu-xenial-td-agent3.sh | sh) \
-&& pip install superlance slacker \
-&& mkdir /run/php && chown www-data:www-data /run/php \
-&& rm -vf /etc/php/7.0/fpm/conf.d/20-xdebug.ini /etc/php/7.0/cli/conf.d/20-xdebug.ini \
-&& rm -vf /etc/php/7.0/fpm/conf.d/20-newrelic.ini /etc/php/7.0/cli/conf.d/20-newrelic.ini \
-&& apt-get autoclean \
-&& rm -vf /var/lib/apt/lists/*.* /tmp/* /var/tmp/*
-
-# Disable xdebug, newrelic by default
+    && apt-get install -y unzip \
+        dialog \
+        net-tools \
+        git \
+        supervisor \
+        python-pip \
+        nginx \
+        php7.0-common \
+        php7.0-dev \
+        php7.0-fpm \
+        php7.0-bcmath \
+        php7.0-curl \
+        php7.0-gd \
+        php7.0-geoip \
+        php7.0-imagick \
+        php7.0-intl \
+        php7.0-json \
+        php7.0-ldap \
+        php7.0-mbstring \
+        php7.0-mcrypt \
+        php7.0-memcache \
+        php7.0-memcached \
+        php7.0-mongo \
+        php7.0-mysqlnd \
+        php7.0-pgsql \
+        php7.0-redis \
+        php7.0-sqlite \
+        php7.0-xml \
+        php7.0-xmlrpc \
+        php7.0-zip \
+        php7.0-xdebug \
+        newrelic-php5 \
+    && (curl -L https://toolbelt.treasuredata.com/sh/install-ubuntu-xenial-td-agent3.sh | sh) \
+    && pip install superlance slacker \
+    && mkdir /run/php && chown www-data:www-data /run/php \
+    && rm -vf /etc/php/7.0/fpm/conf.d/20-xdebug.ini /etc/php/7.0/cli/conf.d/20-xdebug.ini \
+    && rm -vf /etc/php/7.0/fpm/conf.d/20-newrelic.ini /etc/php/7.0/cli/conf.d/20-newrelic.ini \
+    && apt-get autoclean \
+    && rm -vf /var/lib/apt/lists/*.* /tmp/* /var/tmp/*
 
 # Install php-rdkafka
 RUN curl -sSL https://github.com/edenhill/librdkafka/archive/v0.9.3.tar.gz | tar xz \
@@ -86,15 +78,15 @@ RUN curl -sSL https://github.com/arnaud-lb/php-rdkafka/archive/3.0.1.tar.gz | ta
 
 # Install nodejs, npm, phalcon & composer
 RUN curl -sL https://deb.nodesource.com/setup_6.x | bash - \
-&& apt-get install -y nodejs \
-&& curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer \
-&& ln -fs /usr/bin/nodejs /usr/local/bin/node \
-&& npm config set registry http://registry.npmjs.org \
-&& npm config set strict-ssl false \
-&& npm cache clean \
-&& npm install -g aglio bower grunt-cli gulp-cli \
-&& apt-get autoclean \
-&& rm -vf /var/lib/apt/lists/*.*
+    && apt-get install -y nodejs \
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer \
+    && ln -fs /usr/bin/nodejs /usr/local/bin/node \
+    && npm config set registry http://registry.npmjs.org \
+    && npm config set strict-ssl false \
+    && npm cache clean \
+    && npm install -g aglio bower grunt-cli gulp-cli \
+    && apt-get autoclean \
+    && rm -vf /var/lib/apt/lists/*.*
 
 # Install superslacker (supervisord notify to slack)
 RUN curl -sSL https://raw.githubusercontent.com/luk4hn/superslacker/state_change_msg/superslacker/superslacker.py > /usr/local/bin/superslacker \
