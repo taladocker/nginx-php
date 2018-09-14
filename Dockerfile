@@ -91,7 +91,7 @@ RUN curl -sL  https://deb.nodesource.com/setup_8.x | bash -\
 && ln -fs /usr/bin/nodejs /usr/local/bin/node \
 && npm config set registry http://registry.npmjs.org \
 && npm config set strict-ssl false \
-&& npm install -g aglio bower grunt-cli gulp-cli \
+&& npm install -g --unsafe-perm=true aglio bower grunt-cli gulp-cli \
 && apt-get autoclean \
 && rm -vf /var/lib/apt/lists/*.*
 
