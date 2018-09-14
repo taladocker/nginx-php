@@ -55,6 +55,7 @@ RUN add-apt-repository -y ppa:nginx/stable \
         php7.0-zip \
         php7.0-xdebug \
         php7.0-amqp \
+        php7.0-soap \
         newrelic-php5 \
     && (curl -L https://toolbelt.treasuredata.com/sh/install-ubuntu-xenial-td-agent3.sh | sh) \
     && pip install superlance slacker \
