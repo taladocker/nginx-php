@@ -57,6 +57,7 @@ RUN add-apt-repository -y ppa:nginx/stable \
     php7.1-xml \
     php7.1-xmlrpc \
     php7.1-zip \
+    php7.1-soap \
     php7.1-xdebug \
 && echo 'deb http://apt.newrelic.com/debian/ newrelic non-free' > /etc/apt/sources.list.d/newrelic.list \
 && curl -sSL https://download.newrelic.com/548C16BF.gpg | apt-key add - \
