@@ -12,6 +12,7 @@ RUN apt-get update \
     && apt-get install -y software-properties-common \
         language-pack-en-base sudo \
         apt-utils tzdata locales \
+        curl wget \
     && locale-gen en_US.UTF-8 \
     && echo $TZ > /etc/timezone \
     && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
@@ -28,8 +29,6 @@ RUN add-apt-repository -y ppa:nginx/stable \
     && apt-get install -y build-essential \
     vim \
     unzip \
-    curl \
-    wget \
     dialog \
     net-tools \
     git \
