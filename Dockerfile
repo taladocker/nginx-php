@@ -10,7 +10,7 @@ ENV TZ         Asia/Saigon
 # timezone and locale
 RUN apt-get update \
     && apt-get install -y software-properties-common \
-        language-pack-en-base \
+        language-pack-en-base sudo \
         apt-utils tzdata locales \
     && locale-gen en_US.UTF-8 \
     && echo $TZ > /etc/timezone \
@@ -22,6 +22,8 @@ RUN apt-get update \
 # php
 RUN add-apt-repository -y ppa:nginx/stable \
     && add-apt-repository ppa:ondrej/php \
+    && echo 'deb http://apt.newrelic.com/debian/ newrelic non-free' > /etc/apt/sources.list.d/newrelic.list \
+    && curl -sSL https://download.newrelic.com/548C16BF.gpg | apt-key add - \
     && apt-get update \
     && apt-get install -y build-essential \
     vim \
@@ -59,30 +61,27 @@ RUN add-apt-repository -y ppa:nginx/stable \
     php7.1-zip \
     php7.1-soap \
     php7.1-xdebug \
-&& echo 'deb http://apt.newrelic.com/debian/ newrelic non-free' > /etc/apt/sources.list.d/newrelic.list \
-&& curl -sSL https://download.newrelic.com/548C16BF.gpg | apt-key add - \
-&& apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y newrelic-php5 \
+    php7.1-amqp \
+    newrelic-php5 \
+&& phpdismod xdebug newrelic \
+&& (curl -L https://toolbelt.treasuredata.com/sh/install-ubuntu-xenial-td-agent3.sh | sh) \
 && pip install superlance slacker \
 && mkdir /run/php && chown www-data:www-data /run/php \
-&& rm -vf /etc/php/7.1/fpm/conf.d/20-xdebug.ini /etc/php/7.1/cli/conf.d/20-xdebug.ini \
-&& rm -vf /etc/php/7.1/fpm/conf.d/20-newrelic.ini /etc/php/7.1/cli/conf.d/20-newrelic.ini \
 && apt-get autoclean \
 && rm -vf /var/lib/apt/lists/*.* /tmp/* /var/tmp/*
 
-# Disable xdebug, newrelic by default
-
 # Install php-rdkafka
-RUN curl -sSL https://github.com/edenhill/librdkafka/archive/v0.9.3.tar.gz | tar xz \
-    && cd librdkafka-0.9.3 \
+RUN curl -sSL https://github.com/edenhill/librdkafka/archive/v0.11.5.tar.gz | tar xz \
+    && cd librdkafka-0.11.5 \
     && ./configure && make && make install \
-    && cd .. && rm -rf librdkafka-0.9.3
+    && cd .. && rm -rf librdkafka-0.11.5
 
-RUN curl -sSL https://github.com/arnaud-lb/php-rdkafka/archive/3.0.1.tar.gz | tar xz \
-    && cd php-rdkafka-3.0.1 \
+RUN curl -sSL https://github.com/arnaud-lb/php-rdkafka/archive/3.0.5.tar.gz | tar xz \
+    && cd php-rdkafka-3.0.5 \
     && phpize && ./configure && make all && make install \
     && echo "extension=rdkafka.so" > /etc/php/7.1/mods-available/rdkafka.ini \
     && phpenmod rdkafka \
-    && cd .. && rm -rf php-rdkafka-3.0.1
+    && cd .. && rm -rf php-rdkafka-3.0.5
 
 # Install nodejs, npm, phalcon & composer
 RUN curl -sL  https://deb.nodesource.com/setup_8.x | bash -\
@@ -98,7 +97,10 @@ RUN curl -sL  https://deb.nodesource.com/setup_8.x | bash -\
 # Install Yarn
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg |  apt-key add - \
 && echo "deb https://dl.yarnpkg.com/debian/ stable main" |  tee /etc/apt/sources.list.d/yarn.list \
-&&  apt-get update &&  apt-get install yarn -y
+&&  apt-get update \
+&&  apt-get install yarn -y \
+&& apt-get autoclean \
+&& rm -vf /var/lib/apt/lists/*.*
 
 # Install superslacker (supervisord notify to slack)
 RUN curl -sSL https://raw.githubusercontent.com/luk4hn/superslacker/state_change_msg/superslacker/superslacker.py > /usr/local/bin/superslacker \
@@ -112,6 +114,7 @@ COPY conf/php71/cli.php.ini /etc/php/7.1/cli/php.ini
 COPY conf/php71/php-fpm.conf /etc/php/7.1/fpm/php-fpm.conf
 COPY conf/php71/www.conf /etc/php/7.1/fpm/pool.d/www.conf
 COPY conf/supervisor/supervisord.conf /etc/supervisord.conf
+COPY conf/td-agent/td-agent.conf /etc/td-agent/td-agent.conf
 
 # Forward request and error logs to docker log collector
 RUN ln -sf /dev/stdout /var/log/nginx/access.log
