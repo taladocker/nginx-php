@@ -1,5 +1,7 @@
 #!/bin/bash
 
+PHP_VERSION="7.2"
+
 # enable xdebug if ENV variable TK_XDEBUG_ENABLED == 1
 _init_xdebug() {
   local _xdebug_enableb=0
@@ -8,9 +10,9 @@ _init_xdebug() {
   echo ":: initializing xdebug config (_xdebug_enableb=${_xdebug_enableb})"
 
   if [[ $_xdebug_enableb == 1 ]] ; then
-    echo -e "zend_extension=xdebug.so\nxdebug.remote_enable = on" > /etc/php/7.1/mods-available/xdebug.ini
-    ln -svf /etc/php/7.1/mods-available/xdebug.ini /etc/php/7.1/cli/conf.d/20-xdebug.ini
-    ln -svf /etc/php/7.1/mods-available/xdebug.ini /etc/php/7.1/fpm/conf.d/20-xdebug.ini
+    echo -e "zend_extension=xdebug.so\nxdebug.remote_enable = on" > /etc/php/${PHP_VERSION}/mods-available/xdebug.ini
+    ln -svf /etc/php/${PHP_VERSION}/mods-available/xdebug.ini /etc/php/${PHP_VERSION}/cli/conf.d/20-xdebug.ini
+    ln -svf /etc/php/${PHP_VERSION}/mods-available/xdebug.ini /etc/php/${PHP_VERSION}/fpm/conf.d/20-xdebug.ini
   fi
 }
 
@@ -61,15 +63,15 @@ _init_newrelic() {
   echo ":: initializing newrelic config (_newrelic_enableb=${_newrelic_enableb})"
 
   if [[ $_newrelic_enableb == 1 ]] ; then
-    local _f_conf="/etc/php/7.1/mods-available/newrelic.ini"
+    local _f_conf="/etc/php/${PHP_VERSION}/mods-available/newrelic.ini"
     local _license=${TK_NEWRELIC_LICENSE:-}
     local _app_name=${TK_NEWRELIC_APPNAME:-tk-nginx-php}
 
     sed -i "s#newrelic.license = .*#newrelic.license = \"${_license}\"#g" $_f_conf
     sed -i "s#newrelic.appname = .*#newrelic.appname = \"${_app_name}\"#g" $_f_conf
 
-    ln -svf "$_f_conf" /etc/php/7.1/cli/conf.d/20-newrelic.ini
-    ln -svf "$_f_conf" /etc/php/7.1/fpm/conf.d/20-newrelic.ini
+    ln -svf "$_f_conf" /etc/php/${PHP_VERSION}/cli/conf.d/20-newrelic.ini
+    ln -svf "$_f_conf" /etc/php/${PHP_VERSION}/fpm/conf.d/20-newrelic.ini
   fi
 }
 
