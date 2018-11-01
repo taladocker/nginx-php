@@ -14,6 +14,21 @@ _init_xdebug() {
   fi
 }
 
+# enable opcache if ENV variable APP_ENV|ENV = production or TK_OPCACHE_ENABLED == 1
+_init_opcache() {
+  local _opcache_enabled=0
+  [[ -n "${TK_OPCACHE_ENABLED:-}" ]] && _opcache_enabled=$TK_OPCACHE_ENABLED
+  [[ "${APP_ENV:-}" == "production" ]] && _opcache_enabled=1
+  [[ "${ENV:-}" == "production" ]] && _opcache_enabled=1
+
+  echo ":: initializing opcache config (_opcache_enabled=${_opcache_enabled})"
+
+  if [[ $_opcache_enabled == 1 ]] ; then
+    phpenmod opcache
+  fi
+}
+
+
 # if ENV variable TK_IS_WORKER == 1
 # -> only start worker process (dont start nginx, php-fpm)
 _init_worker() {
@@ -98,6 +113,7 @@ if [[ -n "$@" ]]; then
   $@
 else
   _init_xdebug  # for corveralls.io ...
+  _init_opcache
   _init_worker
   _init_superslacker
   _init_newrelic

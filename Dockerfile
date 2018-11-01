@@ -60,8 +60,7 @@ RUN add-apt-repository -y ppa:nginx/stable \
     && (curl -L https://toolbelt.treasuredata.com/sh/install-ubuntu-xenial-td-agent3.sh | sh) \
     && pip install superlance slacker \
     && mkdir /run/php && chown www-data:www-data /run/php \
-    && rm -vf /etc/php/7.0/fpm/conf.d/20-xdebug.ini /etc/php/7.0/cli/conf.d/20-xdebug.ini \
-    && rm -vf /etc/php/7.0/fpm/conf.d/20-newrelic.ini /etc/php/7.0/cli/conf.d/20-newrelic.ini \
+    && phpdismod xdebug newrelic opcache \
     && apt-get autoclean \
     && rm -vf /var/lib/apt/lists/*.* /tmp/* /var/tmp/*
 
