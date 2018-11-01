@@ -62,7 +62,7 @@ RUN add-apt-repository -y ppa:nginx/stable \
     php7.1-xdebug \
     php7.1-amqp \
     newrelic-php5 \
-&& phpdismod xdebug newrelic \
+&& phpdismod xdebug newrelic opcache \
 && (curl -L https://toolbelt.treasuredata.com/sh/install-ubuntu-xenial-td-agent3.sh | sh) \
 && pip install superlance slacker \
 && mkdir /run/php && chown www-data:www-data /run/php \
