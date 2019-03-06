@@ -1,4 +1,4 @@
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 MAINTAINER Hoa Nguyen <hoa.nguyenmanh@tiki.vn>
 
 # ENV
@@ -29,6 +29,7 @@ RUN add-apt-repository -y ppa:nginx/stable \
     && apt-get install -y build-essential \
     vim \
     unzip \
+    sudo \
     dialog \
     net-tools \
     git \
@@ -63,11 +64,20 @@ RUN add-apt-repository -y ppa:nginx/stable \
     php7.1-amqp \
     newrelic-php5 \
 && phpdismod xdebug newrelic opcache \
-&& (curl -L https://toolbelt.treasuredata.com/sh/install-ubuntu-xenial-td-agent3.sh | sh) \
+&& (curl -L https://toolbelt.treasuredata.com/sh/install-ubuntu-bionic-td-agent3.sh | sh) \
 && pip install superlance slacker \
 && mkdir /run/php && chown www-data:www-data /run/php \
 && apt-get autoclean \
-&& rm -vf /var/lib/apt/lists/*.* /tmp/* /var/tmp/*
+&& rm -vf /var/lib/apt/lists/*.* /var/tmp/*
+
+# Install php-snappy
+RUN git clone -b 0.1.9 --recursive --depth=1 https://github.com/kjdev/php-ext-snappy.git \
+    && cd php-ext-snappy \
+    && phpize \
+    && ./configure && make && make install \
+    && echo "extension=snappy.so" > /etc/php/7.1/mods-available/snappy.ini \
+    && phpenmod snappy \
+    && cd .. && rm -rf php-ext-snappy
 
 # Install php-rdkafka
 RUN curl -sSL https://github.com/edenhill/librdkafka/archive/v0.11.5.tar.gz | tar xz \
