@@ -1,4 +1,4 @@
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 MAINTAINER Hoa Nguyen <hoa.nguyenmanh@tiki.vn>
 
 # ENV
@@ -27,6 +27,7 @@ RUN add-apt-repository -y ppa:nginx/stable \
         dialog \
         net-tools \
         git \
+        sudo \
         supervisor \
         python-pip \
         nginx \
@@ -57,12 +58,21 @@ RUN add-apt-repository -y ppa:nginx/stable \
         php7.0-amqp \
         php7.0-soap \
         newrelic-php5 \
-    && (curl -L https://toolbelt.treasuredata.com/sh/install-ubuntu-xenial-td-agent3.sh | sh) \
+    && (curl -L https://toolbelt.treasuredata.com/sh/install-ubuntu-bionic-td-agent3.sh | sh) \
     && pip install superlance slacker \
     && mkdir /run/php && chown www-data:www-data /run/php \
     && phpdismod xdebug newrelic opcache \
     && apt-get autoclean \
-    && rm -vf /var/lib/apt/lists/*.* /tmp/* /var/tmp/*
+    && rm -vf /var/lib/apt/lists/*.* /var/tmp/*
+
+# Install php-snappy
+RUN git clone -b 0.1.9 --recursive --depth=1 https://github.com/kjdev/php-ext-snappy.git \
+    && cd php-ext-snappy \
+    && phpize \
+    && ./configure && make && make install \
+    && echo "extension=snappy.so" > /etc/php/7.0/mods-available/snappy.ini \
+    && phpenmod snappy \
+    && cd .. && rm -rf php-ext-snappy
 
 # Install php-rdkafka
 RUN curl -sSL https://github.com/edenhill/librdkafka/archive/v0.11.5.tar.gz | tar xz \
@@ -78,14 +88,11 @@ RUN curl -sSL https://github.com/arnaud-lb/php-rdkafka/archive/3.0.5.tar.gz | ta
     && cd .. && rm -rf php-rdkafka-3.0.5
 
 # Install nodejs, npm, phalcon & composer
-RUN curl -sL https://deb.nodesource.com/setup_6.x | bash - \
+RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - \
     && apt-get install -y nodejs \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer \
     && ln -fs /usr/bin/nodejs /usr/local/bin/node \
-    && npm config set registry http://registry.npmjs.org \
-    && npm config set strict-ssl false \
-    && npm cache clean \
-    && npm install -g aglio bower grunt-cli gulp-cli \
+    && npm install -g --unsafe-perm=true aglio bower grunt-cli gulp-cli \
     && apt-get autoclean \
     && rm -vf /var/lib/apt/lists/*.*
 
