@@ -80,17 +80,17 @@ RUN git clone -b 0.1.9 --recursive --depth=1 https://github.com/kjdev/php-ext-sn
     && cd .. && rm -rf php-ext-snappy
 
 # Install php-rdkafka
-RUN curl -sSL https://github.com/edenhill/librdkafka/archive/v0.11.5.tar.gz | tar xz \
-    && cd librdkafka-0.11.5 \
+RUN curl -sSL https://github.com/edenhill/librdkafka/archive/v1.1.0.tar.gz | tar xz \
+    && cd librdkafka-1.1.0 \
     && ./configure && make && make install \
-    && cd .. && rm -rf librdkafka-0.11.5
+    && cd .. && rm -rf librdkafka-1.1.0
 
-RUN curl -sSL https://github.com/arnaud-lb/php-rdkafka/archive/3.0.5.tar.gz | tar xz \
-    && cd php-rdkafka-3.0.5 \
+RUN curl -sSL https://github.com/arnaud-lb/php-rdkafka/archive/3.1.2.tar.gz | tar xz \
+    && cd php-rdkafka-3.1.2 \
     && phpize && ./configure && make all && make install \
     && echo "extension=rdkafka.so" > /etc/php/7.1/mods-available/rdkafka.ini \
     && phpenmod rdkafka \
-    && cd .. && rm -rf php-rdkafka-3.0.5
+    && cd .. && rm -rf php-rdkafka-3.1.2
 
 # Install nodejs, npm, phalcon & composer
 RUN curl -sL  https://deb.nodesource.com/setup_8.x | bash -\
