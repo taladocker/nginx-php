@@ -92,7 +92,9 @@ RUN curl -sSL https://github.com/arnaud-lb/php-rdkafka/archive/3.1.2.tar.gz | ta
     && cd .. && rm -rf php-rdkafka-3.1.2
 
 # Install nodejs, npm, phalcon & composer
-RUN curl -sL  https://deb.nodesource.com/setup_8.x | bash -\
+RUN curl -s "https://packagecloud.io/install/repositories/phalcon/stable/script.deb.sh" | sudo bash \
+&& apt-get install php7.2-phalcon \
+&& curl -sL  https://deb.nodesource.com/setup_8.x | bash -\
 && apt-get install -y nodejs \
 && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer \
 && ln -fs /usr/bin/nodejs /usr/local/bin/node \
