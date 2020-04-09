@@ -62,6 +62,7 @@ RUN add-apt-repository -y ppa:nginx/stable \
     php7.1-soap \
     php7.1-xdebug \
     php7.1-amqp \
+    php7.1-phalcon \
     newrelic-php5 \
 && phpdismod xdebug newrelic opcache \
 && (curl -L https://toolbelt.treasuredata.com/sh/install-ubuntu-bionic-td-agent3.sh | sh) \
