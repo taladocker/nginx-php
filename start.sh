@@ -114,6 +114,6 @@ else
   _init_worker
   _init_superslacker
   _init_newrelic
-  _init_tdagent
+  #_init_tdagent
   exec_supervisord
 fi
