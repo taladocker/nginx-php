@@ -13,6 +13,7 @@ RUN apt-get update \
         language-pack-en-base sudo \
         apt-utils tzdata locales \
         curl wget \
+        ca-certificates libgnutls30 \
     && locale-gen en_US.UTF-8 \
     && echo $TZ > /etc/timezone \
     && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
